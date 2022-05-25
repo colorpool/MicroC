@@ -42,6 +42,8 @@ and stmt =
   | Switch of expr * stmt list
   | Case of expr * stmt
   | Default of stmt
+  | Match of expr * stmt list
+  | Pattern of expr * stmt
   | Expr of expr                     (* Expression statement   e;   *)
   | Return of expr option            (* Return from method          *)
   | Block of stmtordec list          (* Block: grouping and scope   *)

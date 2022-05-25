@@ -325,6 +325,21 @@ let rec exec stmt (locEnv: locEnv) (gloEnv: gloEnv) (store: store) : store =
 
     | Case (e, body) -> exec body locEnv gloEnv store
 
+    | Match (e, body) ->
+        let (res, store1) = eval e locEnv gloEnv store
+        let rec choose list =
+            match list with
+            | Pattern (e1, body1) :: tail ->
+                let (res2, store2) = eval e1 locEnv gloEnv store1
+                if res2 = res then
+                    exec body1 locEnv gloEnv store2
+                else
+                    choose tail
+            | [] -> store1
+        (choose body)
+
+    | Pattern (e, body) -> exec body locEnv gloEnv store
+
     | Expr e ->
         // _ 表示丢弃e的值,返回 变更后的环境store1
         let (_, store1) = eval e locEnv gloEnv store

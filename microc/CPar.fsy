@@ -17,11 +17,11 @@ let nl = CstI 10 //  \n 的 ASCII 码
 %token <int> CSTINT CSTBOOL  // <int> 是词元的语义值类型
 %token <string> CSTSTRING NAME
 
-%token CHAR ELSE IF INT NULL PRINT PRINTLN RETURN VOID WHILE FOR IN RANGE SWITCH CASE DEFAULT
+%token CHAR ELSE IF INT NULL PRINT PRINTLN RETURN VOID WHILE FOR IN RANGE SWITCH CASE DEFAULT MATCH WITH
 %token PLUS MINUS TIMES DIV MOD INCREASE DECREASE
 %token EQ NE GT LT GE LE
 %token NOT SEQOR SEQAND
-%token LPAR RPAR LBRACE RBRACE LBRACK RBRACK SEMI COMMA ASSIGN AMP COLON
+%token LPAR RPAR LBRACE RBRACE LBRACK RBRACK SEMI COMMA ASSIGN AMP COLON DEAL MATCHS
 %token EOF
 
 %right ASSIGN             /* lowest precedence */  // 最下面的优先级最高
@@ -144,6 +144,7 @@ StmtM:  /* No unbalanced if-else */
   | FOR LPAR Expr SEMI Expr SEMI Expr RPAR StmtM     { For($3,$5,$7,$9)  }
   | SWITCH LPAR Expr RPAR LBRACE StmtCase RBRACE   { Switch($3,$6)}
   | FOR Access IN RANGE LPAR Expr COMMA Expr COMMA Expr RPAR StmtM {ForIn($2, $6, $8, $10, $12)}
+  | MATCH Expr WITH StmtPattern    {Match($2,$4)}
 ;
 
 StmtU:
@@ -228,4 +229,9 @@ StmtCase:
     CASE AtExprNotAccess COLON StmtM        {[Case($2,$4)]}
     | CASE AtExprNotAccess COLON StmtM StmtCase      {Case($2,$4) :: $5}
     | DEFAULT COLON StmtM        {[Default($3)]}
+;
+
+StmtPattern:
+    MATCHS AtExprNotAccess DEAL StmtM           {[Pattern($2,$4)]}
+    | MATCHS AtExprNotAccess DEAL StmtM StmtPattern           {Pattern($2,$4) :: $5}
 ;
