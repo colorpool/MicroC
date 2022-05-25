@@ -35,6 +35,7 @@ and access =                         //左值，存储的位置
 and stmt =                                                         
   | If of expr * stmt * stmt         (* Conditional                 *)
   | While of expr * stmt             (* While loop                  *)
+  | For of expr * expr * expr * stmt
   | Switch of expr * stmt list
   | Case of expr * stmt
   | Default of stmt

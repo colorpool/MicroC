@@ -37,6 +37,7 @@ type token =
   | RETURN
   | VOID
   | WHILE
+  | FOR
   | SWITCH
   | CASE
   | DEFAULT
@@ -81,6 +82,7 @@ type tokenId =
     | TOKEN_RETURN
     | TOKEN_VOID
     | TOKEN_WHILE
+    | TOKEN_FOR
     | TOKEN_SWITCH
     | TOKEN_CASE
     | TOKEN_DEFAULT
