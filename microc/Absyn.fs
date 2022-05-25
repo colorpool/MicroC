@@ -36,6 +36,7 @@ and stmt =
   | If of expr * stmt * stmt         (* Conditional                 *)
   | While of expr * stmt             (* While loop                  *)
   | For of expr * expr * expr * stmt
+  | ForIn of access * expr * expr * expr * stmt
   | Switch of expr * stmt list
   | Case of expr * stmt
   | Default of stmt

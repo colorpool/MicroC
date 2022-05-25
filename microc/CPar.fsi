@@ -38,6 +38,8 @@ type token =
   | VOID
   | WHILE
   | FOR
+  | IN
+  | RANGE
   | SWITCH
   | CASE
   | DEFAULT
@@ -83,6 +85,8 @@ type tokenId =
     | TOKEN_VOID
     | TOKEN_WHILE
     | TOKEN_FOR
+    | TOKEN_IN
+    | TOKEN_RANGE
     | TOKEN_SWITCH
     | TOKEN_CASE
     | TOKEN_DEFAULT

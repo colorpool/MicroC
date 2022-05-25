@@ -284,6 +284,28 @@ let rec exec stmt (locEnv: locEnv) (gloEnv: gloEnv) (store: store) : store =
                 store2
         loop store0
 
+    | ForIn (var, e1, e2, e3, body) ->
+        let (local_var, store1) = access var locEnv gloEnv store
+        let (start_num, store2) = eval e1 locEnv gloEnv store1
+        let (end_num, store3) = eval e2 locEnv gloEnv store2
+        let (step, store4) = eval e3 locEnv gloEnv store3
+
+        let rec loop temp store5 =
+            let store_local =
+                exec body locEnv gloEnv (setSto store5 local_var temp)
+
+            if temp + step < end_num then
+                let nextValue = temp + step
+                loop nextValue store_local
+            else
+                store_local
+
+        if start_num < end_num then
+            let intValue = start_num
+            loop intValue store4
+        else
+            store4
+
     | Switch (e, body) ->
         let (res, store1) = eval e locEnv gloEnv store
 
