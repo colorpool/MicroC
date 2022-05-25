@@ -360,6 +360,10 @@ and eval e locEnv gloEnv store : int * store =
         let (loc, store1) = access acc locEnv gloEnv store
         let (res) = getSto store1 loc
         (res + 1, setSto store1 loc (res + 1))
+    | Decrease (acc) ->
+        let (loc, store1) = access acc locEnv gloEnv store
+        let (res) = getSto store1 loc
+        (res - 1, setSto store1 loc (res - 1))
     | Assign (acc, e) ->
         let (loc, store1) = access acc locEnv gloEnv store
         let (res, store2) = eval e locEnv gloEnv store1

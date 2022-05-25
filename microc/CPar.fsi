@@ -28,6 +28,7 @@ type token =
   | DIV
   | MOD
   | INCREASE
+  | DECREASE
   | CHAR
   | ELSE
   | IF
@@ -76,6 +77,7 @@ type tokenId =
     | TOKEN_DIV
     | TOKEN_MOD
     | TOKEN_INCREASE
+    | TOKEN_DECREASE
     | TOKEN_CHAR
     | TOKEN_ELSE
     | TOKEN_IF
