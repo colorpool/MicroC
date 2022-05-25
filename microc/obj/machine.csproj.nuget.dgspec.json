@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\huawcl\\Desktop\\plzoofs-master\\microc\\machine.csproj": {}
+    "C:\\Users\\huawcl\\Documents\\GitHub\\MicroC\\microc\\machine.csproj": {}
   },
   "projects": {
-    "C:\\Users\\huawcl\\Desktop\\plzoofs-master\\microc\\machine.csproj": {
+    "C:\\Users\\huawcl\\Documents\\GitHub\\MicroC\\microc\\machine.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\huawcl\\Desktop\\plzoofs-master\\microc\\machine.csproj",
+        "projectUniqueName": "C:\\Users\\huawcl\\Documents\\GitHub\\MicroC\\microc\\machine.csproj",
         "projectName": "machine",
-        "projectPath": "C:\\Users\\huawcl\\Desktop\\plzoofs-master\\microc\\machine.csproj",
+        "projectPath": "C:\\Users\\huawcl\\Documents\\GitHub\\MicroC\\microc\\machine.csproj",
         "packagesPath": "C:\\Users\\huawcl\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\huawcl\\Desktop\\plzoofs-master\\microc\\obj\\",
+        "outputPath": "C:\\Users\\huawcl\\Documents\\GitHub\\MicroC\\microc\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\huawcl\\AppData\\Roaming\\NuGet\\NuGet.Config"
