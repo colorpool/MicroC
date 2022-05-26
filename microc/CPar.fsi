@@ -45,6 +45,7 @@ type token =
   | SWITCH
   | CASE
   | DEFAULT
+  | CREATEI
   | CSTSTRING of (string)
   | NAME of (string)
   | CSTINT of (int)
@@ -94,6 +95,7 @@ type tokenId =
     | TOKEN_SWITCH
     | TOKEN_CASE
     | TOKEN_DEFAULT
+    | TOKEN_CREATEI
     | TOKEN_CSTSTRING
     | TOKEN_NAME
     | TOKEN_CSTINT

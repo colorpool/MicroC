@@ -17,7 +17,7 @@ let nl = CstI 10 //  \n 的 ASCII 码
 %token <int> CSTINT CSTBOOL  // <int> 是词元的语义值类型
 %token <string> CSTSTRING NAME
 
-%token CHAR ELSE IF INT NULL PRINT PRINTLN RETURN VOID WHILE FOR IN RANGE SWITCH CASE DEFAULT
+%token CHAR ELSE IF INT NULL PRINT PRINTLN RETURN VOID WHILE FOR IN RANGE SWITCH CASE DEFAULT CREATEI
 %token PLUS MINUS TIMES DIV MOD INCREASE DECREASE
 %token EQ NE GT LT GE LE
 %token NOT SEQOR SEQAND
@@ -160,6 +160,7 @@ Expr:
   //非左值的情况
 ExprNotAccess:
     AtExprNotAccess                     { $1                  }
+  | CREATEI LPAR CSTSTRING COMMA CSTINT RPAR {CreateI($3,$5)  }
   | Access ASSIGN Expr                  { Assign($1, $3)      } // $1为左值
   | NAME LPAR Exprs RPAR                { Call($1, $3)        }
   | INCREASE Access                     { Increase($2)        }

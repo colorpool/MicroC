@@ -364,6 +364,17 @@ and eval e locEnv gloEnv store : int * store =
         let (loc, store1) = access acc locEnv gloEnv store
         let (res) = getSto store1 loc
         (res - 1, setSto store1 loc (res - 1))
+    | CreateI(s,hex) -> let mutable res = 0;
+                        for i=0 to s.Length-1 do
+                           if s.Chars(i)>='0' && s.Chars(i)<='9' then
+                             res <- res*hex + ( (int (s.Chars(i)))-(int '0') )
+                           elif s.Chars(i)>='a' && s.Chars(i)<='f' then
+                             res <- res*hex + ( (int (s.Chars(i)))-(int 'a')+10 )
+                           elif s.Chars(i)>='A' && s.Chars(i)<='F' then
+                             res <- res*hex + ( (int (s.Chars(i)))-(int 'A')+10 )
+                           else 
+                             failwith("ERROR WORLD IN NUMBER")
+                        (int res,store)    
     | Assign (acc, e) ->
         let (loc, store1) = access acc locEnv gloEnv store
         let (res, store2) = eval e locEnv gloEnv store1
