@@ -27,6 +27,7 @@ let keyword s =
     | "null"    -> NULL
     | "print"   -> PRINT
     | "println" -> PRINTLN
+    | "createI" -> CREATEI
     | "return"  -> RETURN
     | "true"    -> CSTBOOL 1
     | "void"    -> VOID 

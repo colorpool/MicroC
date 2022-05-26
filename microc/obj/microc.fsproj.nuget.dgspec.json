@@ -1,20 +1,20 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\huawcl\\Documents\\GitHub\\MicroC\\microc\\microc.fsproj": {}
+    "C:\\Users\\MSI-NB\\Documents\\GitHub\\MicroC\\microc\\microc.fsproj": {}
   },
   "projects": {
-    "C:\\Users\\huawcl\\Documents\\GitHub\\MicroC\\microc\\microc.fsproj": {
+    "C:\\Users\\MSI-NB\\Documents\\GitHub\\MicroC\\microc\\microc.fsproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\huawcl\\Documents\\GitHub\\MicroC\\microc\\microc.fsproj",
+        "projectUniqueName": "C:\\Users\\MSI-NB\\Documents\\GitHub\\MicroC\\microc\\microc.fsproj",
         "projectName": "microc",
-        "projectPath": "C:\\Users\\huawcl\\Documents\\GitHub\\MicroC\\microc\\microc.fsproj",
-        "packagesPath": "C:\\Users\\huawcl\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\huawcl\\Documents\\GitHub\\MicroC\\microc\\obj\\",
+        "projectPath": "C:\\Users\\MSI-NB\\Documents\\GitHub\\MicroC\\microc\\microc.fsproj",
+        "packagesPath": "C:\\Users\\MSI-NB\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\MSI-NB\\Documents\\GitHub\\MicroC\\microc\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "C:\\Users\\huawcl\\AppData\\Roaming\\NuGet\\NuGet.Config"
+          "C:\\Users\\MSI-NB\\AppData\\Roaming\\NuGet\\NuGet.Config"
         ],
         "originalTargetFrameworks": [
           "net6.0"
@@ -60,7 +60,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\6.0.201\\RuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files (x86)\\dotnet\\sdk\\6.0.203\\RuntimeIdentifierGraph.json"
         }
       }
     }

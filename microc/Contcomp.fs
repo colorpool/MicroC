@@ -300,7 +300,17 @@ and cExpr (e : expr) (varEnv : VarEnv) (funEnv : FunEnv) (C : instr list) : inst
            (IFNZRO labtrue 
              :: cExpr e2 varEnv funEnv (addJump jumpend C2))
     | Call(f, es) -> callfun f es varEnv funEnv C
-
+    | CreateI(s,hex)    -> let mutable res = 0;
+                           for i=0 to s.Length-1 do
+                                if s.Chars(i)>='0' && s.Chars(i)<='9' then
+                                    res <- res*hex + ( (int (s.Chars(i)))-(int '0') )
+                                elif s.Chars(i)>='a' && s.Chars(i)<='f' then
+                                    res <- res*hex + ( (int (s.Chars(i)))-(int 'a')+10 )
+                                elif s.Chars(i)>='A' && s.Chars(i)<='F' then
+                                    res <- res*hex + ( (int (s.Chars(i)))-(int 'A')+10 )
+                                else 
+                                    failwith("ERROR WORLD IN NUMBER")
+                           addCST res C
 (* Generate code to access variable, dereference pointer or index array: *)
 
 and cAccess access varEnv funEnv C = 

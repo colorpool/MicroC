@@ -34,9 +34,8 @@ let keyword s =
     | "range"      -> RANGE
     | "switch"   -> SWITCH
     | "case"   -> CASE
-    | "default"   -> DEFAULT   
-    | "match"   -> MATCH
-    | "with"    -> WITH     
+    | "createI" -> CREATEI
+    | "default"   -> DEFAULT        
     | _         -> NAME s   // 缺省情况，是标识符的名字，如 函数名，变量名等
                             // 当所有的关键字没有匹配成功时，则当成标识符
 // 字符串转义符处理函数
@@ -89,9 +88,7 @@ rule Token = parse          // 每个 规则rule 会生成为一个函数，函�
   | "||"            { SEQOR }                     
   | "&&"            { SEQAND }                     
   | "&"             { AMP }                     
-  | "!"             { NOT }   
-  | "->"            { DEAL }
-  | "|"             { MATCHS }                  
+  | "!"             { NOT }                     
   | '('             { LPAR }
   | ')'             { RPAR }
   | '{'             { LBRACE }

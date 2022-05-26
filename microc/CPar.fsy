@@ -6,10 +6,6 @@
 *)
 open Absyn
 
-let first  (a, _, _) = a
-let second (_, b, _) = b
-let third  (_, _, c) = c
-
 // Vardesc 返回的是一个 元组 (g,s)
 // g是类型构造函数，s是变量名
 // compose1 函数 取出 类型构造子 g，用类型复合机制构造类型。
@@ -21,11 +17,11 @@ let nl = CstI 10 //  \n 的 ASCII 码
 %token <int> CSTINT CSTBOOL  // <int> 是词元的语义值类型
 %token <string> CSTSTRING NAME
 
-%token CHAR ELSE IF INT NULL PRINT PRINTLN RETURN VOID WHILE FOR IN RANGE SWITCH CASE DEFAULT MATCH WITH
+%token CHAR ELSE IF INT NULL PRINT PRINTLN RETURN VOID WHILE FOR IN RANGE SWITCH CASE DEFAULT CREATEI
 %token PLUS MINUS TIMES DIV MOD INCREASE DECREASE
 %token EQ NE GT LT GE LE
 %token NOT SEQOR SEQAND
-%token LPAR RPAR LBRACE RBRACE LBRACK RBRACK SEMI COMMA ASSIGN AMP COLON DEAL MATCHS
+%token LPAR RPAR LBRACE RBRACE LBRACK RBRACK SEMI COMMA ASSIGN AMP COLON
 %token EOF
 
 %right ASSIGN             /* lowest precedence */  // 最下面的优先级最高
@@ -59,7 +55,6 @@ Topdecs:
 Topdec: 
     Vardec SEMI                         { Vardec (fst $1, snd $1) }
   | Fundec                              { $1 }
-  | VariableDeclareAndAssign SEMI       { VariableDeclareAndAssign(first $1, second $1 , third $1)  }
 ;
 
 /*                                               
@@ -84,10 +79,6 @@ Vardec:
  变量描述
 NAME  "n"   (fun t->t, "n") 返回一个元组，第一个元素，是类型构造函数，在Vardec 规则中使用
 */ 
-
-VariableDeclareAndAssign:
-    Type  Vardesc ASSIGN Expr    { ((fst $2) $1, snd $2 , $4) }
-;
 
 // 变量描述
 Vardesc:                         
@@ -136,7 +127,6 @@ StmtOrDecSeq:
     /* empty */                         { [] }
   | Stmt StmtOrDecSeq                   { Stmt $1 :: $2 }
   | Vardec SEMI StmtOrDecSeq            { Dec (fst $1, snd $1) :: $3 }
-  | VariableDeclareAndAssign SEMI StmtOrDecSeq { DeclareAndAssign(first $1, second $1 , third $1) :: $3 }
 ;
 
 Stmt: 
@@ -154,7 +144,6 @@ StmtM:  /* No unbalanced if-else */
   | FOR LPAR Expr SEMI Expr SEMI Expr RPAR StmtM     { For($3,$5,$7,$9)  }
   | SWITCH LPAR Expr RPAR LBRACE StmtCase RBRACE   { Switch($3,$6)}
   | FOR Access IN RANGE LPAR Expr COMMA Expr COMMA Expr RPAR StmtM {ForIn($2, $6, $8, $10, $12)}
-  | MATCH Expr WITH StmtPattern    {Match($2,$4)}
 ;
 
 StmtU:
@@ -171,6 +160,7 @@ Expr:
   //非左值的情况
 ExprNotAccess:
     AtExprNotAccess                     { $1                  }
+  | CREATEI LPAR CSTSTRING COMMA CSTINT RPAR {CreateI($3,$5)  }
   | Access ASSIGN Expr                  { Assign($1, $3)      } // $1为左值
   | NAME LPAR Exprs RPAR                { Call($1, $3)        }
   | INCREASE Access                     { Increase($2)        }
@@ -239,9 +229,4 @@ StmtCase:
     CASE AtExprNotAccess COLON StmtM        {[Case($2,$4)]}
     | CASE AtExprNotAccess COLON StmtM StmtCase      {Case($2,$4) :: $5}
     | DEFAULT COLON StmtM        {[Default($3)]}
-;
-
-StmtPattern:
-    MATCHS AtExprNotAccess DEAL StmtM           {[Pattern($2,$4)]}
-    | MATCHS AtExprNotAccess DEAL StmtM StmtPattern           {Pattern($2,$4) :: $5}
 ;
