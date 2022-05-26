@@ -1,3 +1,4 @@
-void main(int n) {
-    n = 3;
+void main(){
+    int a = 3;
+    print a;
 }
