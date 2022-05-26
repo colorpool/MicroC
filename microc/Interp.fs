@@ -361,7 +361,12 @@ let rec exec stmt (locEnv: locEnv) (gloEnv: gloEnv) (store: store) : store =
 
         loop stmts (locEnv, store)
 
-    | Return _ -> failwith "return not implemented" // 解释器没有实现 return
+    // | Return _ -> failwith "return not implemented" // 解释器没有实现 return
+    | Return e ->  match e with
+                  | Some e1 -> let (res ,store0) = eval e1 locEnv gloEnv store;
+                               let st = store0.Add(-1, res);
+                               (st)                     
+                  | None -> store
 
 and stmtordec stmtordec locEnv gloEnv store =
     match stmtordec with
@@ -487,7 +492,12 @@ and callfun f es locEnv gloEnv store : int * store =
         bindVars (List.map snd paramdecs) vs (varEnv, nextloc) store1
 
     let store3 = exec fBody fBodyEnv gloEnv store2
-    (-111, store3)
+    // (-111, store3)
+    let res = store3.TryFind(-1) 
+    let restore = store3.Remove(-1)
+    match res with
+    // | None -> ( BOOLEAN false,restore)
+    | Some i -> (i,restore)
 
 (* Interpret a complete micro-C program by initializing the store
    and global environments, then invoking its `main' function.
