@@ -50,6 +50,7 @@ type token =
   | DEFAULT
   | MATCH
   | WITH
+  | CSTCHAR of (char)
   | CSTSTRING of (string)
   | NAME of (string)
   | CSTINT of (int)
@@ -104,6 +105,7 @@ type tokenId =
     | TOKEN_DEFAULT
     | TOKEN_MATCH
     | TOKEN_WITH
+    | TOKEN_CSTCHAR
     | TOKEN_CSTSTRING
     | TOKEN_NAME
     | TOKEN_CSTINT
@@ -133,6 +135,7 @@ type nonTerminalId =
     | NONTERM_Exprs
     | NONTERM_Exprs1
     | NONTERM_Const
+    | NONTERM_CstC
     | NONTERM_Type
     | NONTERM_StmtCase
     | NONTERM_StmtPattern
