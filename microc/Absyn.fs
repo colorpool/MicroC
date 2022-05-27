@@ -40,6 +40,7 @@ and access =                         //左值，存储的位置
 and stmt =                                                         
   | If of expr * stmt * stmt         (* Conditional                 *)
   | While of expr * stmt             (* While loop                  *)
+  | DoWhile of stmt * expr           (* DoWhile loop       *)
   | For of expr * expr * expr * stmt
   | ForIn of access * expr * expr * expr * stmt
   | Switch of expr * stmt list

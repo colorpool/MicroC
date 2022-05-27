@@ -42,6 +42,8 @@ type token =
   | RETURN
   | VOID
   | WHILE
+  | DOWHILE
+  | DO
   | FOR
   | IN
   | RANGE
@@ -97,6 +99,8 @@ type tokenId =
     | TOKEN_RETURN
     | TOKEN_VOID
     | TOKEN_WHILE
+    | TOKEN_DOWHILE
+    | TOKEN_DO
     | TOKEN_FOR
     | TOKEN_IN
     | TOKEN_RANGE
