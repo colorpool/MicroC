@@ -285,6 +285,17 @@ let rec exec stmt (locEnv: locEnv) (gloEnv: gloEnv) (store: store) : store =
                 store2
         loop (exec body locEnv gloEnv store)
 
+    | DoUntil (body, e) ->
+        let rec loop store1 =
+            // 求值 循环条件
+            let (v, store2) = eval e locEnv gloEnv store1
+            // 下一轮循环
+            if v = 0 then
+                loop (exec body locEnv gloEnv store2)
+            else
+                store2
+        loop (exec body locEnv gloEnv store)
+
     | For (e1, e2, e3, body) ->
         let (res, store0) = eval e1 locEnv gloEnv store
         let rec loop store1 =

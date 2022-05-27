@@ -24,7 +24,7 @@ let nl = CstI 10 //  \n 的 ASCII 码
 %token <string> CSTSTRING NAME
 %token <char> CSTCHAR
 
-%token CHAR ELSE IF INT BOOLEAN NULL PRINT PRINTLN RETURN VOID WHILE DOWHILE DO FOR IN RANGE SWITCH CASE DEFAULT MATCH WITH
+%token CHAR ELSE IF INT BOOLEAN NULL PRINT PRINTLN RETURN VOID WHILE DOWHILE DO UNTIL FOR IN RANGE SWITCH CASE DEFAULT MATCH WITH
 %token PLUS MINUS TIMES DIV MOD INCREASE DECREASE
 %token EQ NE GT LT GE LE
 %token NOT SEQOR SEQAND
@@ -155,6 +155,7 @@ StmtM:  /* No unbalanced if-else */
   | IF LPAR Expr RPAR StmtM ELSE StmtM  { If($3, $5, $7)       }
   | WHILE LPAR Expr RPAR StmtM          { While($3, $5)        }
   | DO StmtM WHILE LPAR Expr RPAR SEMI  { DoWhile($2,$5)}
+  | DO StmtM UNTIL LPAR Expr RPAR SEMI  { DoUntil($2,$5)}
   | SWITCH LPAR Expr RPAR LBRACE StmtCase RBRACE   { Switch($3,$6)}
   | FOR LPAR Expr SEMI Expr SEMI Expr RPAR StmtM     { For($3,$5,$7,$9)  }
   | FOR Access IN RANGE LPAR Expr COMMA Expr COMMA Expr RPAR StmtM {ForIn($2, $6, $8, $10, $12)}

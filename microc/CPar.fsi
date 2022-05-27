@@ -44,6 +44,7 @@ type token =
   | WHILE
   | DOWHILE
   | DO
+  | UNTIL
   | FOR
   | IN
   | RANGE
@@ -101,6 +102,7 @@ type tokenId =
     | TOKEN_WHILE
     | TOKEN_DOWHILE
     | TOKEN_DO
+    | TOKEN_UNTIL
     | TOKEN_FOR
     | TOKEN_IN
     | TOKEN_RANGE

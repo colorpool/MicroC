@@ -31,6 +31,7 @@ let keyword s =
     | "void"    -> VOID 
     | "while"   -> WHILE 
     | "dowhile" -> DOWHILE
+    | "until"   -> UNTIL
     | "do"      -> DO
     | "for"     -> FOR 
     | "in"      -> IN
