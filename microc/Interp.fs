@@ -344,6 +344,7 @@ let rec exec stmt (locEnv: locEnv) (gloEnv: gloEnv) (store: store) : store =
 
     | Pattern (e, body) -> exec body locEnv gloEnv store
 
+
     | Expr e ->
         // _ 表示丢弃e的值,返回 变更后的环境store1
         let (_, store1) = eval e locEnv gloEnv store
@@ -361,7 +362,7 @@ let rec exec stmt (locEnv: locEnv) (gloEnv: gloEnv) (store: store) : store =
 
         loop stmts (locEnv, store)
 
-    // | Return _ -> failwith "return not implemented" // 解释器没有实现 return
+    // | Return _ -> failwith "return is not implemented" // 解释器没有实现 return
     | Return e ->  match e with
                   | Some e1 -> let (res ,store0) = eval e1 locEnv gloEnv store;
                                let st = store0.Add(-1, res);
@@ -372,11 +373,10 @@ and stmtordec stmtordec locEnv gloEnv store =
     match stmtordec with
     | Stmt stmt -> (locEnv, exec stmt locEnv gloEnv store)
     | Dec (typ, x) -> allocate (typ, x) locEnv store
-    | DeclareAndAssign(typ, x,e) -> let (loc,store1) = allocate (typ, x)  locEnv  store
+    | DeclareAndAssign(typ, x,e) -> let (loc,store1) = allocate (typ, x)  locEnv store
                                     let (loc2, store2) = access (AccVar x) loc gloEnv store1
                                     let (res, store3) =  eval e loc gloEnv store2
                                     (loc, setSto store3 loc2 res) 
-
 (* Evaluating micro-C expressions *)
 
 and eval e locEnv gloEnv store : int * store =
@@ -392,17 +392,6 @@ and eval e locEnv gloEnv store : int * store =
         let (loc, store1) = access acc locEnv gloEnv store
         let (res) = getSto store1 loc
         (res - 1, setSto store1 loc (res - 1))
-    | CreateI(s,hex) -> let mutable res = 0;
-                        for i=0 to s.Length-1 do
-                           if s.Chars(i)>='0' && s.Chars(i)<='9' then
-                             res <- res*hex + ( (int (s.Chars(i)))-(int '0') )
-                           elif s.Chars(i)>='a' && s.Chars(i)<='f' then
-                             res <- res*hex + ( (int (s.Chars(i)))-(int 'a')+10 )
-                           elif s.Chars(i)>='A' && s.Chars(i)<='F' then
-                             res <- res*hex + ( (int (s.Chars(i)))-(int 'A')+10 )
-                           else 
-                             failwith("ERROR WORLD IN NUMBER")
-                        (int res,store)    
     | Assign (acc, e) ->
         let (loc, store1) = access acc locEnv gloEnv store
         let (res, store2) = eval e locEnv gloEnv store1
