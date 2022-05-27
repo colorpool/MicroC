@@ -32,6 +32,11 @@ type token =
   | MOD
   | INCREASE
   | DECREASE
+  | SELFPLUS
+  | SELFMINUS
+  | SELFTIMES
+  | SELFDIV
+  | SELFMOD
   | CHAR
   | ELSE
   | IF
@@ -91,6 +96,11 @@ type tokenId =
     | TOKEN_MOD
     | TOKEN_INCREASE
     | TOKEN_DECREASE
+    | TOKEN_SELFPLUS
+    | TOKEN_SELFMINUS
+    | TOKEN_SELFTIMES
+    | TOKEN_SELFDIV
+    | TOKEN_SELFMOD
     | TOKEN_CHAR
     | TOKEN_ELSE
     | TOKEN_IF

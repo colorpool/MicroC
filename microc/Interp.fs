@@ -406,6 +406,25 @@ and eval e locEnv gloEnv store : int * store =
     | Access acc ->
         let (loc, store1) = access acc locEnv gloEnv store
         (getSto store1 loc, store1)
+
+    | Self(acc,opt,e)-> let (loc, store1) = access acc locEnv gloEnv store
+                        let (mem1) = getSto store1 loc
+                        let (mem2, store2) = eval e locEnv gloEnv store
+                        let i1 =  mem1
+                        let i2 =  mem2
+                        match opt with
+                        | "*"  ->  let res = i1 * i2
+                                   (res, setSto store2 loc res)
+                        | "+"  ->  let res = i1 + i2
+                                   (mem1, setSto store2 loc res)
+                        | "-"  ->  let res = i1 - i2
+                                   (mem1, setSto store2 loc res)
+                        | "/"  ->  let res = i1 / i2
+                                   (res, setSto store2 loc res)
+                        | "%"  ->  let res = i1 % i2
+                                   (res, setSto store2 loc res)
+                        | _    -> failwith ("unknown primitive " + opt)
+
     | Increase (acc) ->
         let (loc, store1) = access acc locEnv gloEnv store
         let (res) = getSto store1 loc

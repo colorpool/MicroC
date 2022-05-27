@@ -78,6 +78,11 @@ rule Token = parse          // 每个 规则rule 会生成为一个函数，函�
         { try let single = lexemeAsString lexbuf in CSTCHAR (System.Char.Parse(single.Substring(1, 1))) with ex -> failwith "Char literal error." }
   | '+'             { PLUS }  // 返回Token PLUS 给调用词法分析器的程序，通常是Parser
                               // 此时lexbuf是 匹配 '+'完成后，后续的内容 
+  | "+="            { SELFPLUS }
+  | "-="            { SELFMINUS }
+  | "*="            { SELFTIMES }
+  | "/="            { SELFDIV }
+  | "%="            { SELFMOD }
   | "++"            { INCREASE }
   | "--"            { DECREASE}
   | '-'             { MINUS } 

@@ -32,6 +32,7 @@ and expr =                           // 表达式，右值
   | Call of string * expr list       (* Function call f(...)        *)
   | Increase of access
   | Decrease of access
+  | Self of  access * string * expr
                                                                    
 and access =                         //左值，存储的位置                                            
   | AccVar of string                 (* Variable access        x    *) 
