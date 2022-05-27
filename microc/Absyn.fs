@@ -26,6 +26,7 @@ and expr =                           // 表达式，右值
   | CstC of char 
   | Prim1 of string * expr           (* Unary primitive operator    *)
   | Prim2 of string * expr * expr    (* Binary primitive operator   *)
+  | Prim3 of expr * expr * expr (* 三目运算 *)
   | Andalso of expr * expr           (* Sequential and              *)
   | Orelse of expr * expr            (* Sequential or               *)
   | Call of string * expr list       (* Function call f(...)        *)
@@ -41,7 +42,7 @@ and stmt =
   | If of expr * stmt * stmt         (* Conditional                 *)
   | While of expr * stmt             (* While loop                  *)
   | DoWhile of stmt * expr           (* DoWhile loop       *)
-   | DoUntil of stmt * expr          (* DoUntil loop       *)
+  | DoUntil of stmt * expr          (* DoUntil loop       *)
   | For of expr * expr * expr * stmt
   | ForIn of access * expr * expr * expr * stmt
   | Switch of expr * stmt list

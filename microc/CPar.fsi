@@ -12,6 +12,7 @@ type token =
   | COMMA
   | ASSIGN
   | AMP
+  | QUE
   | COLON
   | DEAL
   | MATCHS
@@ -70,6 +71,7 @@ type tokenId =
     | TOKEN_COMMA
     | TOKEN_ASSIGN
     | TOKEN_AMP
+    | TOKEN_QUE
     | TOKEN_COLON
     | TOKEN_DEAL
     | TOKEN_MATCHS
