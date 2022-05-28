@@ -35,6 +35,8 @@ and expr =                           // 表达式，右值
   | Self of  access * string * expr
   | Print of string * expr
   | CreateI of string * int
+  | ToInt of expr
+  | ToChar of expr
                                                                    
 and access =                         //左值，存储的位置                                            
   | AccVar of string                 (* Variable access        x    *) 

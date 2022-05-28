@@ -29,7 +29,7 @@ let nl = CstI 10 //  \n 的 ASCII 码
 %token <string> CSTSTRING NAME
 %token <char> CSTCHAR
 
-%token CHAR ELSE IF INT BOOLEAN NULL PRINT PRINTLN RETURN VOID WHILE DOWHILE DO UNTIL FOR IN RANGE SWITCH CASE DEFAULT MATCH WITH CREATEI
+%token CHAR ELSE IF INT BOOLEAN NULL PRINT PRINTLN RETURN VOID WHILE DOWHILE DO UNTIL FOR IN RANGE SWITCH CASE DEFAULT MATCH WITH CREATEI TOCHAR TOINT
 %token PLUS MINUS TIMES DIV MOD INCREASE DECREASE SELFPLUS SELFMINUS SELFTIMES SELFDIV SELFMOD
 %token EQ NE GT LT GE LE
 %token NOT SEQOR SEQAND
@@ -47,6 +47,7 @@ let nl = CstI 10 //  \n 的 ASCII 码
 %left TIMES DIV MOD 
 %right INCREASE DECREASE
 %nonassoc NOT AMP 
+%right TOCHAR TOINT
 %nonassoc LBRACK          /* highest precedence  */
 
 %start Main            // 语法开始符号
@@ -211,6 +212,8 @@ ExprNotAccess:
   | Expr SEQAND Expr                    { Andalso($1, $3)     }
   | Expr SEQOR  Expr                    { Orelse($1, $3)      }
   | CREATEI LPAR CSTSTRING COMMA CSTINT RPAR {CreateI($3,$5)  }
+  | LPAR TOCHAR RPAR Expr               { ToChar($4)          }
+  | LPAR TOINT RPAR Expr                { ToInt($4)           }
 ;
 
 AtExprNotAccess:

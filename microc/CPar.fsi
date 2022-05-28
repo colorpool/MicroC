@@ -60,6 +60,8 @@ type token =
   | MATCH
   | WITH
   | CREATEI
+  | TOCHAR
+  | TOINT
   | CSTCHAR of (char)
   | CSTSTRING of (string)
   | NAME of (string)
@@ -125,6 +127,8 @@ type tokenId =
     | TOKEN_MATCH
     | TOKEN_WITH
     | TOKEN_CREATEI
+    | TOKEN_TOCHAR
+    | TOKEN_TOINT
     | TOKEN_CSTCHAR
     | TOKEN_CSTSTRING
     | TOKEN_NAME

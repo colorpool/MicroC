@@ -527,6 +527,14 @@ and eval e locEnv gloEnv store : int * store =
                            else 
                              failwith("ERROR WORLD IN NUMBER")
                         (res,store)  
+    | ToInt e ->  let (res,s) = eval e locEnv gloEnv store
+                  match res with
+                  | i when i>=(int '0') && i<=(int '9') -> (int i - int '0',s)
+                  | _ ->  ((res) ,s)
+    | ToChar e -> let (res,s) = eval e locEnv gloEnv store
+                  match res with
+                  | i when i>=0 && i<=9 -> ((i + int '0'),s)
+                  | _ ->  ((res) ,s)
 
 and access acc locEnv gloEnv store : int * store =
     match acc with
