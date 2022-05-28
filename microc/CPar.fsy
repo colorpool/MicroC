@@ -14,6 +14,11 @@ let third  (_, _, c) = c
 // Vardesc 返回的是一个 元组 (g,s)
 // g是类型构造函数，s是变量名
 
+let isCorrect s:string  = 
+    match (string s) with
+    | _ -> if((string s).[0]>='A' && (string s).[0]<='Z') then failwith("var can not start with uppercase")
+           else (string s)
+
 // compose1 函数 取出 类型构造子 g，用类型复合机制构造类型。
 
 let compose1 f (g, s) = ((fun x -> g(f(x))), s)
@@ -95,7 +100,7 @@ VariableDeclareAndAssign:
 // 变量描述
 Vardesc:                         
     // "i"    标识符                        fun t->t  id 函数
-    NAME                                { ((fun t -> t), ($1)  )                   }
+    NAME                                { ((fun t -> t), isCorrect($1)  )                   }
     // "*p"   指针标识符
     // let compose1 f (g, s) = ((fun x -> g(f(x))), s)
     //      compose1 TypP $2 
