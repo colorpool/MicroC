@@ -516,6 +516,18 @@ and eval e locEnv gloEnv store : int * store =
             eval e2 locEnv gloEnv store1
     | Call (f, es) -> callfun f es locEnv gloEnv store
 
+    | CreateI(s,hex) -> let mutable res = 0;
+                        for i=0 to s.Length-1 do
+                           if s.Chars(i)>='0' && s.Chars(i)<='9' then
+                             res <- res*hex + ( (int (s.Chars(i)))-(int '0') )
+                           elif s.Chars(i)>='a' && s.Chars(i)<='f' then
+                             res <- res*hex + ( (int (s.Chars(i)))-(int 'a')+10 )
+                           elif s.Chars(i)>='A' && s.Chars(i)<='F' then
+                             res <- res*hex + ( (int (s.Chars(i)))-(int 'A')+10 )
+                           else 
+                             failwith("ERROR WORLD IN NUMBER")
+                        (res,store)  
+
 and access acc locEnv gloEnv store : int * store =
     match acc with
     | AccVar x -> (lookup (fst locEnv) x, store)

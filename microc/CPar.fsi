@@ -59,6 +59,7 @@ type token =
   | DEFAULT
   | MATCH
   | WITH
+  | CREATEI
   | CSTCHAR of (char)
   | CSTSTRING of (string)
   | NAME of (string)
@@ -123,6 +124,7 @@ type tokenId =
     | TOKEN_DEFAULT
     | TOKEN_MATCH
     | TOKEN_WITH
+    | TOKEN_CREATEI
     | TOKEN_CSTCHAR
     | TOKEN_CSTSTRING
     | TOKEN_NAME
