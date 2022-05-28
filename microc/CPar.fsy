@@ -183,6 +183,7 @@ ExprNotAccess:
   | DECREASE Access                     { Decrease($2)        }
   | Access DECREASE                     { Decrease($1)        }
   | NOT Expr                            { Prim1("!", $2)      }
+  | PRINT LPAR CSTSTRING COMMA Expr RPAR {  Print($3,$5)      }
   | PRINT Expr                          { Prim1("printi", $2) }
   | PRINTLN Expr                        { Prim1("printc", $2) }
   | Expr PLUS  Expr                     { Prim2("+",  $1, $3) }

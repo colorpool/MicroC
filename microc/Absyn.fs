@@ -33,6 +33,7 @@ and expr =                           // 表达式，右值
   | Increase of access
   | Decrease of access
   | Self of  access * string * expr
+  | Print of string * expr
                                                                    
 and access =                         //左值，存储的位置                                            
   | AccVar of string                 (* Variable access        x    *) 

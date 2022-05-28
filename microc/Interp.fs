@@ -440,6 +440,19 @@ and eval e locEnv gloEnv store : int * store =
     | CstI i -> (i, store)
     | CstC c -> ((int c), store)
     | Addr acc -> access acc locEnv gloEnv store
+    | Print (op, e1) ->
+        let (i1, store1) = eval e1 locEnv gloEnv store
+
+        let res =
+            match op with
+            | "%c" ->
+                (printf "%c " (char i1)
+                 i1)
+            | "%d" ->
+                (printf "%d " i1
+                 i1)
+
+        (res, store1)
     | Prim1 (ope, e1) ->
         let (i1, store1) = eval e1 locEnv gloEnv store
 
