@@ -36,6 +36,66 @@ open Debug
 //  名称 ---> 数据 名称与数据绑定关系的 键-值 对  key-value pairs
 // [("x",9);("y",8)]: int env
 
+type mem =
+  | INT of int
+  | STRING of string
+  | POINTER of int
+  | FLOAT of float
+  | CHAR of char
+  | BOOLEAN of bool
+  | STRUCT of string*int*int
+  | ARRAY of typ*int*int
+
+  member this.int = 
+    match this with 
+    | INT i -> i
+    | POINTER i -> i
+    | FLOAT f -> int f
+    | CHAR c -> int c
+    | BOOLEAN b -> if b then 1 else 0
+    | STRUCT (s,i,size) -> i
+    | ARRAY (typ , i,size) -> i
+    | _ -> failwith("not int")
+  
+  member this.string = 
+    match this with 
+    | STRING s -> s
+    | _ -> failwith("not string")
+  
+  member this.char = 
+    match this with 
+    | CHAR c -> c
+    | INT i -> char i
+    | _ -> failwith("not char")
+
+  member this.float = 
+    match this with 
+    | FLOAT f -> f
+    | INT i -> float i
+    | _ -> failwith("not float")
+
+  member this.boolean = 
+    match this with 
+    | BOOLEAN b -> b
+    | _ -> failwith("not boolean")
+
+  member this.pointer = 
+    match this with 
+    | POINTER i -> i
+    | INT i -> i
+    | _ -> failwith("not pointer")
+  
+  member this.checktype =
+    match this with 
+    | INT i -> TypI
+    | FLOAT f -> TypF
+    | CHAR c -> TypC
+    | BOOLEAN b -> TypB
+    | STRING s -> TypS
+    | ARRAY(typ,i,size) ->  TypA(typ,Some size)
+    | STRUCT (s,i,size) -> TypeStruct s
+    | _ -> failwith("error")
+
 type 'data env = (string * 'data) list
 
 //环境查找函数
@@ -439,6 +499,10 @@ and eval e locEnv gloEnv store : int * store =
             | _ -> failwith ("unknown primitive " + ope)
 
         (res, store2)
+    | CstI i -> (i, store)
+    | ConstNull i -> (i, store)
+    // | ConstString s -> (0, store)
+    | ConstChar c -> ((int c), store)
     | Andalso (e1, e2) ->
         let (i1, store1) as res = eval e1 locEnv gloEnv store
 

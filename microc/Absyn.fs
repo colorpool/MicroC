@@ -17,6 +17,10 @@ type typ =
   | TypP of typ                      (* Pointer type                *)
                                                                    
 and expr =                           // 表达式，右值                                                
+  | ConstString of string (* constant String *)
+  | ConstChar of char (* constant Char *)
+  | ConstNull of int (* constant Null *)
+  | Print of string * expr
   | CreateI of string * int
   | Access of access                 (* x    or  *p    or  a[e]     *) //访问左值（右值）
   | Assign of access * expr          (* x=e  or  *p=e  or  a[e]=e   *)
