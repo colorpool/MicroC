@@ -1,13 +1,8 @@
-void main(int n) {
-  
+void main(){
     int a ;
-    char b ;
-    float f;
-    
-
-    print("%d",a);
-
-    print("%c",b);
-    print("%f",f);
-
+    print a;
+    boolean b;
+    print b;
+    char c;
+    print c;
 }
