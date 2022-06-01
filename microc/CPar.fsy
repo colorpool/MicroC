@@ -6,19 +6,8 @@
 *)
 open Absyn
 
-let first  (a, _, _) = a
-let second (_, b, _) = b
-let third  (_, _, c) = c
-
-
 // Vardesc 返回的是一个 元组 (g,s)
 // g是类型构造函数，s是变量名
-
-let isCorrect s:string  = 
-    match (string s) with
-    | _ -> if((string s).[0]>='A' && (string s).[0]<='Z') then failwith("var can not start with uppercase")
-           else (string s)
-
 // compose1 函数 取出 类型构造子 g，用类型复合机制构造类型。
 
 let compose1 f (g, s) = ((fun x -> g(f(x))), s)
@@ -28,26 +17,26 @@ let nl = CstI 10 //  \n 的 ASCII 码
 %token <int> CSTINT CSTBOOL  // <int> 是词元的语义值类型
 %token <string> CSTSTRING NAME
 %token <char> CSTCHAR
+%token CHAR STRING
 
-%token CHAR ELSE IF INT BOOLEAN NULL PRINT PRINTLN RETURN VOID WHILE DOWHILE DO UNTIL FOR IN RANGE SWITCH CASE DEFAULT MATCH WITH CREATEI TOCHAR TOINT
-%token PLUS MINUS TIMES DIV MOD INCREASE DECREASE SELFPLUS SELFMINUS SELFTIMES SELFDIV SELFMOD
+%token CHAR ELSE IF INT NULL PRINT PRINTLN RETURN VOID WHILE FOR IN RANGE SWITCH CASE DEFAULT CREATEI
+%token PLUS MINUS TIMES DIV MOD INCREASE DECREASE
 %token EQ NE GT LT GE LE
 %token NOT SEQOR SEQAND
-%token LPAR RPAR LBRACE RBRACE LBRACK RBRACK SEMI COMMA ASSIGN AMP QUE COLON DEAL MATCHS
+%token LPAR RPAR LBRACE RBRACE LBRACK RBRACK SEMI COMMA ASSIGN AMP COLON
 %token EOF
 
 %right ASSIGN             /* lowest precedence */  // 最下面的优先级最高
 %nonassoc PRINT
-%right QUE COLON
+%right COLON
 %left SEQOR
 %left SEQAND
 %left EQ NE 
 %nonassoc GT LT GE LE
-%left PLUS MINUS SELFPLUS SELFMINUS SELFTIMES SELFDIV SELFMOD
+%left PLUS MINUS
 %left TIMES DIV MOD 
 %right INCREASE DECREASE
 %nonassoc NOT AMP 
-%right TOCHAR TOINT
 %nonassoc LBRACK          /* highest precedence  */
 
 %start Main            // 语法开始符号
@@ -68,7 +57,6 @@ Topdecs:
 Topdec: 
     Vardec SEMI                         { Vardec (fst $1, snd $1) }
   | Fundec                              { $1 }
-  | VariableDeclareAndAssign SEMI       { VariableDeclareAndAssign(first $1, second $1 , third $1)  }
 ;
 
 /*                                               
@@ -94,14 +82,10 @@ Vardec:
 NAME  "n"   (fun t->t, "n") 返回一个元组，第一个元素，是类型构造函数，在Vardec 规则中使用
 */ 
 
-VariableDeclareAndAssign:
-    Type  Vardesc ASSIGN Expr    { ((fst $2) $1, snd $2 , $4) }
-;
-
 // 变量描述
 Vardesc:                         
     // "i"    标识符                        fun t->t  id 函数
-    NAME                                { ((fun t -> t), isCorrect($1)  )                   }
+    NAME                                { ((fun t -> t), $1)                      }
     // "*p"   指针标识符
     // let compose1 f (g, s) = ((fun x -> g(f(x))), s)
     //      compose1 TypP $2 
@@ -145,7 +129,6 @@ StmtOrDecSeq:
     /* empty */                         { [] }
   | Stmt StmtOrDecSeq                   { Stmt $1 :: $2 }
   | Vardec SEMI StmtOrDecSeq            { Dec (fst $1, snd $1) :: $3 }
-  | VariableDeclareAndAssign SEMI StmtOrDecSeq { DeclareAndAssign(first $1, second $1 , third $1) :: $3 }
 ;
 
 Stmt: 
@@ -160,12 +143,9 @@ StmtM:  /* No unbalanced if-else */
   | Block                               { $1                   }
   | IF LPAR Expr RPAR StmtM ELSE StmtM  { If($3, $5, $7)       }
   | WHILE LPAR Expr RPAR StmtM          { While($3, $5)        }
-  | DO StmtM WHILE LPAR Expr RPAR SEMI  { DoWhile($2,$5)}
-  | DO StmtM UNTIL LPAR Expr RPAR SEMI  { DoUntil($2,$5)}
-  | SWITCH LPAR Expr RPAR LBRACE StmtCase RBRACE   { Switch($3,$6)}
   | FOR LPAR Expr SEMI Expr SEMI Expr RPAR StmtM     { For($3,$5,$7,$9)  }
+  | SWITCH LPAR Expr RPAR LBRACE StmtCase RBRACE   { Switch($3,$6)}
   | FOR Access IN RANGE LPAR Expr COMMA Expr COMMA Expr RPAR StmtM {ForIn($2, $6, $8, $10, $12)}
-  | MATCH Expr WITH StmtPattern    {Match($2,$4)}
 ;
 
 StmtU:
@@ -182,38 +162,29 @@ Expr:
   //非左值的情况
 ExprNotAccess:
     AtExprNotAccess                     { $1                  }
+  | CREATEI LPAR CSTSTRING COMMA CSTINT RPAR {CreateI($3,$5)  }
   | Access ASSIGN Expr                  { Assign($1, $3)      } // $1为左值
-  | NAME LPAR Exprs RPAR                { Call($1, $3)        } 
+  | NAME LPAR Exprs RPAR                { Call($1, $3)        }
   | INCREASE Access                     { Increase($2)        }
-  | Access INCREASE                     { Increase($1)        } 
+  | Access INCREASE                     { Increase($1)        }
   | DECREASE Access                     { Decrease($2)        }
-  | Access DECREASE                     { Decrease($1)        }
+  | Access DECREASE                     { Decrease($1)        }   
   | NOT Expr                            { Prim1("!", $2)      }
-  | PRINT LPAR CSTSTRING COMMA Expr RPAR {  Print($3,$5)      }
   | PRINT Expr                          { Prim1("printi", $2) }
-  | PRINTLN Expr                        { Prim1("printc", $2) }
+  | PRINTLN                             { Prim1("printc", nl) }
   | Expr PLUS  Expr                     { Prim2("+",  $1, $3) }
   | Expr MINUS Expr                     { Prim2("-",  $1, $3) }
   | Expr TIMES Expr                     { Prim2("*",  $1, $3) }
   | Expr DIV   Expr                     { Prim2("/",  $1, $3) }
   | Expr MOD   Expr                     { Prim2("%",  $1, $3) }
-  | Access SELFPLUS  Expr               { Self($1,"+",$3)     }
-  | Access SELFMINUS  Expr              { Self($1,"-",$3)     }
-  | Access SELFTIMES  Expr              { Self($1,"*",$3)     }
-  | Access SELFDIV  Expr                { Self($1,"/",$3)     }
-  | Access SELFMOD  Expr                { Self($1,"%",$3)     }
   | Expr EQ    Expr                     { Prim2("==", $1, $3) }
   | Expr NE    Expr                     { Prim2("!=", $1, $3) }
   | Expr GT    Expr                     { Prim2(">",  $1, $3) }
   | Expr LT    Expr                     { Prim2("<",  $1, $3) }
   | Expr GE    Expr                     { Prim2(">=", $1, $3) }
   | Expr LE    Expr                     { Prim2("<=", $1, $3) }
-  | Expr QUE Expr COLON Expr            { Prim3($1,$3,$5)     }
   | Expr SEQAND Expr                    { Andalso($1, $3)     }
   | Expr SEQOR  Expr                    { Orelse($1, $3)      }
-  | CREATEI LPAR CSTSTRING COMMA CSTINT RPAR {CreateI($3,$5)  }
-  | LPAR TOCHAR RPAR Expr               { ToChar($4)          }
-  | LPAR TOINT RPAR Expr                { ToInt($4)           }
 ;
 
 AtExprNotAccess:
@@ -222,7 +193,6 @@ AtExprNotAccess:
     // AMP Access  , &x
     // (3)   
     Const                               { CstI $1             }
-  | CstC                          { CstC($1)       }
   | LPAR ExprNotAccess RPAR             { $2                  } 
   | AMP Access                          { Addr $2             } // 取地址
 ;
@@ -252,24 +222,13 @@ Const:
   | NULL                                { -1       }
 ;
 
-CstC:
-    CSTCHAR             {  $1  }
-;
-
-
 Type:
     INT                                 { TypI     }
   | CHAR                                { TypC     }
-  | BOOLEAN                             { TypB     }
 ;
 
 StmtCase:
     CASE AtExprNotAccess COLON StmtM        {[Case($2,$4)]}
     | CASE AtExprNotAccess COLON StmtM StmtCase      {Case($2,$4) :: $5}
     | DEFAULT COLON StmtM        {[Default($3)]}
-;
-
-StmtPattern:
-    MATCHS AtExprNotAccess DEAL StmtM           {[Pattern($2,$4)]}
-    | MATCHS AtExprNotAccess DEAL StmtM StmtPattern           {Pattern($2,$4) :: $5}
 ;

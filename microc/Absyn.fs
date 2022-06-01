@@ -15,28 +15,24 @@ type typ =
   | TypC                             (* Type char                   *)
   | TypA of typ * int option         (* Array type                  *)
   | TypP of typ                      (* Pointer type                *)
-  | TypB 
                                                                    
 and expr =                           // 表达式，右值                                                
+  | ConstString of string (* constant String *)
+  | ConstChar of char (* constant Char *)
+  | ConstNull of int (* constant Null *)
+  | Print of string * expr
+  | CreateI of string * int
   | Access of access                 (* x    or  *p    or  a[e]     *) //访问左值（右值）
   | Assign of access * expr          (* x=e  or  *p=e  or  a[e]=e   *)
   | Addr of access                   (* &x   or  &*p   or  &a[e]    *)
   | CstI of int                      (* Constant                    *)
-  | CstB of bool
-  | CstC of char 
   | Prim1 of string * expr           (* Unary primitive operator    *)
   | Prim2 of string * expr * expr    (* Binary primitive operator   *)
-  | Prim3 of expr * expr * expr (* 三目运算 *)
   | Andalso of expr * expr           (* Sequential and              *)
   | Orelse of expr * expr            (* Sequential or               *)
   | Call of string * expr list       (* Function call f(...)        *)
   | Increase of access
   | Decrease of access
-  | Self of  access * string * expr
-  | Print of string * expr
-  | CreateI of string * int
-  | ToInt of expr
-  | ToChar of expr
                                                                    
 and access =                         //左值，存储的位置                                            
   | AccVar of string                 (* Variable access        x    *) 
@@ -46,8 +42,6 @@ and access =                         //左值，存储的位置
 and stmt =                                                         
   | If of expr * stmt * stmt         (* Conditional                 *)
   | While of expr * stmt             (* While loop                  *)
-  | DoWhile of stmt * expr           (* DoWhile loop       *)
-  | DoUntil of stmt * expr          (* DoUntil loop       *)
   | For of expr * expr * expr * stmt
   | ForIn of access * expr * expr * expr * stmt
   | Switch of expr * stmt list

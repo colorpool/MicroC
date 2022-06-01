@@ -1,5 +1,7 @@
-void main() {
+void main(int n) {
+  
     char a;
-    a = 'a';
-    println a;
- }
+    a = '3';
+    printc("%c",a);
+
+}

@@ -62,6 +62,11 @@ let cEscape s =
 }
                         
 rule Token = parse          // 每个 规则rule 会生成为一个函数，函数名是规则名 Token
+  | ['\'']['a'-'z''A'-'Z''0'-'9']['\'']
+      { try let single = lexemeAsString lexbuf in CSTCHAR
+(System.Char.Parse(single.Substring(1, 1))) with ex -> failwith
+"Char literal error." }
+
   | [' ' '\t' '\r'] { Token lexbuf } 
                              // 变量是lexbuf 函数Token的默认参数，由外部程序构造
                              // 每条规则匹配成功后 lexbuf 内容会自动更新

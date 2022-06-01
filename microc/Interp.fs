@@ -36,6 +36,66 @@ open Debug
 //  名称 ---> 数据 名称与数据绑定关系的 键-值 对  key-value pairs
 // [("x",9);("y",8)]: int env
 
+type mem =
+  | INT of int
+  | STRING of string
+  | POINTER of int
+  | FLOAT of float
+  | CHAR of char
+  | BOOLEAN of bool
+  | STRUCT of string*int*int
+  | ARRAY of typ*int*int
+
+  member this.int = 
+    match this with 
+    | INT i -> i
+    | POINTER i -> i
+    | FLOAT f -> int f
+    | CHAR c -> int c
+    | BOOLEAN b -> if b then 1 else 0
+    | STRUCT (s,i,size) -> i
+    | ARRAY (typ , i,size) -> i
+    | _ -> failwith("not int")
+  
+  member this.string = 
+    match this with 
+    | STRING s -> s
+    | _ -> failwith("not string")
+  
+  member this.char = 
+    match this with 
+    | CHAR c -> c
+    | INT i -> char i
+    | _ -> failwith("not char")
+
+  member this.float = 
+    match this with 
+    | FLOAT f -> f
+    | INT i -> float i
+    | _ -> failwith("not float")
+
+  member this.boolean = 
+    match this with 
+    | BOOLEAN b -> b
+    | _ -> failwith("not boolean")
+
+  member this.pointer = 
+    match this with 
+    | POINTER i -> i
+    | INT i -> i
+    | _ -> failwith("not pointer")
+  
+  member this.checktype =
+    match this with 
+    | INT i -> TypI
+    | FLOAT f -> TypF
+    | CHAR c -> TypC
+    | BOOLEAN b -> TypB
+    | STRING s -> TypS
+    | ARRAY(typ,i,size) ->  TypA(typ,Some size)
+    | STRUCT (s,i,size) -> TypeStruct s
+    | _ -> failwith("error")
+
 type 'data env = (string * 'data) list
 
 //环境查找函数
@@ -207,10 +267,8 @@ let rec allocate (typ, x) (env0, nextloc) sto0 : locEnv * store =
         match typ with
         //数组 调用 initSto 分配 i 个空间
         | TypA (t, Some i) -> (nextloc + i, nextloc, initSto nextloc i sto0)
-        | TypI   -> (nextloc,  0,sto0)
-        | TypB   -> (nextloc,  0,sto0)
-        // 常规变量默认值是 -1
-        | _ -> (nextloc, -1, sto0)
+        // 常规变量默认值是 0
+        | _ -> (nextloc, 0, sto0)
 
     msg $"\nalloc:\n {((typ, x), (env0, nextloc), sto0)}\n"
     bindVar x v (env0, nextloc1) sto1
@@ -275,28 +333,6 @@ let rec exec stmt (locEnv: locEnv) (gloEnv: gloEnv) (store: store) : store =
                 store2 //退出循环返回 环境store2
 
         loop store
-
-    | DoWhile (body, e) ->
-        let rec loop store1 =
-            // 求值 循环条件
-            let (v, store2) = eval e locEnv gloEnv store1
-            // 下一轮循环
-            if v <> 0 then
-                loop (exec body locEnv gloEnv store2)
-            else
-                store2
-        loop (exec body locEnv gloEnv store)
-
-    | DoUntil (body, e) ->
-        let rec loop store1 =
-            // 求值 循环条件
-            let (v, store2) = eval e locEnv gloEnv store1
-            // 下一轮循环
-            if v = 0 then
-                loop (exec body locEnv gloEnv store2)
-            else
-                store2
-        loop (exec body locEnv gloEnv store)
 
     | For (e1, e2, e3, body) ->
         let (res, store0) = eval e1 locEnv gloEnv store
@@ -368,7 +404,6 @@ let rec exec stmt (locEnv: locEnv) (gloEnv: gloEnv) (store: store) : store =
 
     | Pattern (e, body) -> exec body locEnv gloEnv store
 
-
     | Expr e ->
         // _ 表示丢弃e的值,返回 变更后的环境store1
         let (_, store1) = eval e locEnv gloEnv store
@@ -386,21 +421,17 @@ let rec exec stmt (locEnv: locEnv) (gloEnv: gloEnv) (store: store) : store =
 
         loop stmts (locEnv, store)
 
-    // | Return _ -> failwith "return is not implemented" // 解释器没有实现 return
-    | Return e ->  match e with
-                  | Some e1 -> let (res ,store0) = eval e1 locEnv gloEnv store;
-                               let st = store0.Add(-1, res);
-                               (st)                     
-                  | None -> store
+    | Return _ -> failwith "return not implemented" // 解释器没有实现 return
 
 and stmtordec stmtordec locEnv gloEnv store =
     match stmtordec with
     | Stmt stmt -> (locEnv, exec stmt locEnv gloEnv store)
     | Dec (typ, x) -> allocate (typ, x) locEnv store
-    | DeclareAndAssign(typ, x,e) -> let (loc,store1) = allocate (typ, x)  locEnv store
+    | DeclareAndAssign(typ, x,e) -> let (loc,store1) = allocate (typ, x)  locEnv  store
                                     let (loc2, store2) = access (AccVar x) loc gloEnv store1
                                     let (res, store3) =  eval e loc gloEnv store2
                                     (loc, setSto store3 loc2 res) 
+
 (* Evaluating micro-C expressions *)
 
 and eval e locEnv gloEnv store : int * store =
@@ -408,25 +439,6 @@ and eval e locEnv gloEnv store : int * store =
     | Access acc ->
         let (loc, store1) = access acc locEnv gloEnv store
         (getSto store1 loc, store1)
-
-    | Self(acc,opt,e)-> let (loc, store1) = access acc locEnv gloEnv store
-                        let (mem1) = getSto store1 loc
-                        let (mem2, store2) = eval e locEnv gloEnv store
-                        let i1 =  mem1
-                        let i2 =  mem2
-                        match opt with
-                        | "*"  ->  let res = i1 * i2
-                                   (res, setSto store2 loc res)
-                        | "+"  ->  let res = i1 + i2
-                                   (mem1, setSto store2 loc res)
-                        | "-"  ->  let res = i1 - i2
-                                   (mem1, setSto store2 loc res)
-                        | "/"  ->  let res = i1 / i2
-                                   (res, setSto store2 loc res)
-                        | "%"  ->  let res = i1 % i2
-                                   (res, setSto store2 loc res)
-                        | _    -> failwith ("unknown primitive " + opt)
-
     | Increase (acc) ->
         let (loc, store1) = access acc locEnv gloEnv store
         let (res) = getSto store1 loc
@@ -435,26 +447,23 @@ and eval e locEnv gloEnv store : int * store =
         let (loc, store1) = access acc locEnv gloEnv store
         let (res) = getSto store1 loc
         (res - 1, setSto store1 loc (res - 1))
+    | CreateI(s,hex) -> let mutable res = 0;
+                        for i=0 to s.Length-1 do
+                           if s.Chars(i)>='0' && s.Chars(i)<='9' then
+                             res <- res*hex + ( (int (s.Chars(i)))-(int '0') )
+                           elif s.Chars(i)>='a' && s.Chars(i)<='f' then
+                             res <- res*hex + ( (int (s.Chars(i)))-(int 'a')+10 )
+                           elif s.Chars(i)>='A' && s.Chars(i)<='F' then
+                             res <- res*hex + ( (int (s.Chars(i)))-(int 'A')+10 )
+                           else 
+                             failwith("ERROR WORLD IN NUMBER")
+                        (int res,store)    
     | Assign (acc, e) ->
         let (loc, store1) = access acc locEnv gloEnv store
         let (res, store2) = eval e locEnv gloEnv store1
         (res, setSto store2 loc res)
     | CstI i -> (i, store)
-    | CstC c -> ((int c), store)
     | Addr acc -> access acc locEnv gloEnv store
-    | Print (op, e1) ->
-        let (i1, store1) = eval e1 locEnv gloEnv store
-
-        let res =
-            match op with
-            | "%c" ->
-                (printf "%c " (char i1)
-                 i1)
-            | "%d" ->
-                (printf "%d " i1
-                 i1)
-
-        (res, store1)
     | Prim1 (ope, e1) ->
         let (i1, store1) = eval e1 locEnv gloEnv store
 
@@ -490,16 +499,10 @@ and eval e locEnv gloEnv store : int * store =
             | _ -> failwith ("unknown primitive " + ope)
 
         (res, store2)
-
-    | Prim3 (e1, e2, e3) ->
-        let (i1, store1) = eval e1 locEnv gloEnv store
-        let (i2, store2) = eval e2 locEnv gloEnv store1
-        let (i3, store3) = eval e3 locEnv gloEnv store2
-        if i1 = 0 then
-            (i3, store3)
-        else
-            (i2, store3)
-            
+    | CstI i -> (i, store)
+    | ConstNull i -> (i, store)
+    // | ConstString s -> (0, store)
+    | ConstChar c -> ((int c), store)
     | Andalso (e1, e2) ->
         let (i1, store1) as res = eval e1 locEnv gloEnv store
 
@@ -515,26 +518,6 @@ and eval e locEnv gloEnv store : int * store =
         else
             eval e2 locEnv gloEnv store1
     | Call (f, es) -> callfun f es locEnv gloEnv store
-
-    | CreateI(s,hex) -> let mutable res = 0;
-                        for i=0 to s.Length-1 do
-                           if s.Chars(i)>='0' && s.Chars(i)<='9' then
-                             res <- res*hex + ( (int (s.Chars(i)))-(int '0') )
-                           elif s.Chars(i)>='a' && s.Chars(i)<='f' then
-                             res <- res*hex + ( (int (s.Chars(i)))-(int 'a')+10 )
-                           elif s.Chars(i)>='A' && s.Chars(i)<='F' then
-                             res <- res*hex + ( (int (s.Chars(i)))-(int 'A')+10 )
-                           else 
-                             failwith("ERROR WORLD IN NUMBER")
-                        (res,store)  
-    | ToInt e ->  let (res,s) = eval e locEnv gloEnv store
-                  match res with
-                  | i when i>=(int '0') && i<=(int '9') -> (int i - int '0',s)
-                  | _ ->  ((res) ,s)
-    | ToChar e -> let (res,s) = eval e locEnv gloEnv store
-                  match res with
-                  | i when i>=0 && i<=9 -> ((i + int '0'),s)
-                  | _ ->  ((res) ,s)
 
 and access acc locEnv gloEnv store : int * store =
     match acc with
@@ -568,12 +551,7 @@ and callfun f es locEnv gloEnv store : int * store =
         bindVars (List.map snd paramdecs) vs (varEnv, nextloc) store1
 
     let store3 = exec fBody fBodyEnv gloEnv store2
-    // (-111, store3)
-    let res = store3.TryFind(-1) 
-    let restore = store3.Remove(-1)
-    match res with
-    // | None -> ( BOOLEAN false,restore)
-    | Some i -> (i,restore)
+    (-111, store3)
 
 (* Interpret a complete micro-C program by initializing the store
    and global environments, then invoking its `main' function.
