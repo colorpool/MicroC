@@ -1,0 +1,33 @@
+J: 解释器interpc
+B: 编译器microc
+Y: 优化编译器microcc
+
+for JBY 测试：J B Y
+
+dowhile JBY 测试：J B Y
+
+dountil JBY 测试：J B Y
+
+++ -- JBY 测试：J B Y
+
+switch JBY 测试：J B Y
+
+？： JBY 测试：J B Y
+
+match JBY 测试：J B Y
+
+bool JBY 测试：J B Y
+
+char JBY 测试：J B Y
+
+float JBY 测试：J B Y
+
++= -+ *= /+ JBY 测试：J B Y
+
+break JBY 测试：B Y
+
+continue JBY 测试：J B Y
+
+<< >> JBY 测试：J B Y
+
+PASS JBY 测试：J B Y
